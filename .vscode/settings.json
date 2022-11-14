@@ -1,0 +1,27 @@
+{
+  "files.associations": {
+    "*.tsx": "typescript",
+    "cinttypes": "cpp",
+    "ostream": "cpp",
+    "array": "cpp",
+    "bitset": "cpp",
+    "string_view": "cpp",
+    "initializer_list": "cpp",
+    "regex": "cpp",
+    "utility": "cpp",
+    "valarray": "cpp",
+    "deque": "cpp",
+    "forward_list": "cpp",
+    "list": "cpp",
+    "string": "cpp",
+    "unordered_map": "cpp",
+    "unordered_set": "cpp",
+    "vector": "cpp",
+    "*.tcc": "cpp",
+    "random": "cpp",
+    "iosfwd": "cpp",
+    "stdio.h": "c",
+    "cstring": "c",
+    "charconv": "c"
+  }
+}

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        async function f1() {
+            fetch(`http://localhost:8888`, {
+                method: 'GET',
+            }).then(res => res.text())
+            .then(res => {document.getElementById('log0').innerHTML = res});
+        }
+        async function f2() {
+            fetch(`http://localhost:8889`, {
+                method: 'GET',
+            }).then(res => res.text())
+            .then(res => {
+                document.getElementById('log0').innerHTML = res});
+        }
+        
+    </script>
+</head>
+<body>
+    <div>
+        <h4>get test</h4>
+        <button onclick="f1()">8888</button>
+        <button onclick="f2()">8889</button>
+    </div>
+    <div>
+        <h4>post test</h4>
+        
+    </div>
+        <div>
+        <textarea id="terminal" name="terminal">
+#include <stdio.h>
+
+int main() {
+printf("Hello World\n");
+return 0;
+}
+        </textarea>
+        </div>
+        <button id="post8888" type="button">8888</button>
+        <button id="post8889" type="button">8889</button>
+    <div>
+        <pre id="log0">log</pre>
+        <pre id="log1">log</pre>
+    </div>
+    <script>
+
+        async function f3() {
+            fetch(`http://localhost:8888`, {
+                method: 'POST',
+                body: `${"`"}${document.getElementById('terminal').value}`,
+            }).then(res => res.text())
+            .then(res => {document.getElementById('log1').innerHTML = res});
+        }
+        async function f4(event) {
+            fetch(`http://localhost:8889`, {
+                method: 'POST',
+                body: `${"`"}${document.getElementById('terminal').value}`            }).then(res => res.text())
+            .then(res => {
+                document.getElementById('log1').innerHTML = res});
+        }
+
+        function f5(event) {
+            event.preventDefault();
+            f3();
+            return false;
+        }
+
+        function f6(event) {
+            event.preventDefault();
+            f4();
+            return false;
+        }
+
+        let port8888 = document.getElementById('post8888').addEventListener("click", e => f5(e));
+        let port8889 = document.getElementById('post8889').addEventListener("click", e => f6(e));
+        
+    </script>
+</body>
+</html>
