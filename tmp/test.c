@@ -1,7 +1,6 @@
-#include <stdio.h>
+#include<stdio.h>
 
 int main() {
-    printf("Hello World\n");
-    printf("문자는 잘됨\n");
-    return 0;
+  printf("Hello World!\n111");;
+  return 0;
 }

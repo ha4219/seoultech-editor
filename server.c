@@ -15,8 +15,6 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
-//custom
-// #include <picohttpparser.h>
 
 char* call2bash(char* cmd) {
     FILE *fp;
@@ -196,30 +194,35 @@ int main(int argc, char **argv) {
     socklen_t remote_sin_len;
 
     if (argc < 2) {
-        // printf("Usage: \n");
-        // printf("\t%s {port}: runs mini HTTP server.\n", argv[0]);
-        // exit(0);
-        port = 8888;
+        printf("Usage: \n");
+        printf("\t%s {port}: runs mini HTTP server.\n", argv[0]);
+        exit(0);
     }
 
     port = atoi(argv[1]);
-    if (argc < 2) {
-        port = 8888;
-    }
     printf("[INFO] The server will listen to port: %d.\n", port);
 
-    lsock = socket(AF_INET, SOCK_STREAM, 0);
+    lsock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (lsock < 0) {
         perror("[ERR] failed to create lsock.\n");
         exit(1);
     }
+    memset(&remote_sin, 0, sizeof(remote_sin));
+    remote_sin.sin_family = AF_INET;
+    remote_sin.sin_addr.s_addr = htonl(INADDR_ANY);
+    remote_sin.sin_port = htons(port);
 
-    if (bind_lsock(lsock, port) < 0) {
+
+//    if (bind_lsock(lsock, port) < 0) {
+//        perror("[ERR] failed to bind lsock.\n");
+//        exit(1);
+//    }
+    if (bind(lsock, (struct sockaddr *) &remote_sin, sizeof(remote_sin))<0){
         perror("[ERR] failed to bind lsock.\n");
         exit(1);
     }
 
-    if (listen(lsock, 10) < 0) {
+    if (listen(lsock, 5) < 0) {
         perror("[ERR] failed to listen lsock.\n");
         exit(1);
     }
@@ -229,22 +232,25 @@ int main(int argc, char **argv) {
     char buf[BUF_SIZE];
     int cnt;
     struct msghdr msg;
+    unsigned int clntLen;
 
     while (1) {
         printf("[INFO] waiting...\n");
-        asock = accept(lsock, (struct sockaddr *)&remote_sin, &remote_sin_len);
-        if (asock < 0) {
+	clntLen = sizeof(remote_sin);
+        clntLen = accept(lsock, (struct sockaddr *)&remote_sin, &clntLen);
+        if (clntLen < 0) {
+//	    printf("asock: %d\nlsock: %d\nclntLen: %d", asock, lsock, clntLen);
             perror("[ERR] failed to accept.\n");
             continue;
         }
 
         pid = fork();
         if (pid == 0) {
-            close(lsock); http_handler(asock); close(asock);
+            close(lsock); http_handler(clntLen); close(clntLen);
             exit(0);
         }
 
-        if (pid != 0)   { close(asock); }
+        if (pid != 0)   { close(clntLen); }
         if (pid < 0)    { perror("[ERR] failed to fork.\n"); }
     }
 }
