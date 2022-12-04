@@ -22,6 +22,11 @@
     "iosfwd": "cpp",
     "stdio.h": "c",
     "cstring": "c",
-    "charconv": "c"
+    "charconv": "c",
+    "chrono": "c",
+    "ctime": "c",
+    "condition_variable": "c",
+    "mutex": "c",
+    "shared_mutex": "c"
   }
 }

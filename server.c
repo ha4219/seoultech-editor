@@ -14,6 +14,7 @@
 #include <sys/stat.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <time.h>
 
 
 char* call2bash(char* cmd) {
@@ -29,12 +30,12 @@ char* call2bash(char* cmd) {
     return res;
 }
 
-void buildAndRunInC(char* input) {
+void buildAndRunInC(char* input, char* fileName) {
     FILE *fp, *file;
 
-    file = fopen("tmp/test.c", "w+");
+    file = fopen(fileName, "w+");
     if (file == NULL) {
-        printf("not created tmp/test.c");
+        printf("not created %s", fileName);
     }
     fprintf(file, input);
     fclose(file);
@@ -167,9 +168,23 @@ void http_handler(int asock) {
     //     perror("[ERR] Failed to open file.\n");
     //     handle_500(asock); return;
     // }
+    time_t mytime;
+    time(&mytime);
+    char *time_str = (char*)malloc(26*sizeof(char));
+    struct tm* time_info;
+    time_info = localtime(&mytime);
+    strftime(time_str, 26, "%Y-%m-%d-%H:%M:%S", time_info);
+    // time_str[strlen(time_str) - 1] = '\0';
 
-    buildAndRunInC(prev);
-    call2bash("gcc -o test ./tmp/test.c");
+    char dest[100] = "tmp/";
+    char ext[3] = ".c";
+    strcat(dest, time_str);
+    strcat(dest, ext);
+    char cmd[120] = "gcc -o test ";
+    strcat(cmd, dest);
+
+    buildAndRunInC(prev, dest);
+    call2bash(cmd);
     char *res = call2bash("./test");
     printf("%s\n", res);
     // int ct_len = st.st_size;
@@ -236,7 +251,7 @@ int main(int argc, char **argv) {
 
     while (1) {
         printf("[INFO] waiting...\n");
-	clntLen = sizeof(remote_sin);
+	    clntLen = sizeof(remote_sin);
         clntLen = accept(lsock, (struct sockaddr *)&remote_sin, &clntLen);
         if (clntLen < 0) {
 //	    printf("asock: %d\nlsock: %d\nclntLen: %d", asock, lsock, clntLen);
